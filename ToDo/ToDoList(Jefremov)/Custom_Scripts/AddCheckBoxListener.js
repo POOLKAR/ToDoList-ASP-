@@ -4,9 +4,9 @@
         var self = $(this);
         var id = self.attr('id');
         var value = self.prop('checked');
-
+        console.log(id); console.log(value)
         $.ajax({
-            url: '/ToDoes/AJAXEdit',
+            url: '/ToDoes/AJAXEdit?id=' + id + '&value=' + value,
             data: {
                 id: id,
                 value: value

@@ -1,0 +1,44 @@
+﻿
+@{
+    ViewBag.Title = "Tasks";
+}
+
+<!--===============================================================================================-->
+<link rel="icon" type="image/png" href="~/Images/icons/favicon.ico" />
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/vendor/bootstrap/css/bootstrap.min.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/vendor/animate/animate.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/vendor/select2/select2.min.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/vendor/perfect-scrollbar/perfect-scrollbar.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/css/util.css">
+<link rel="stylesheet" type="text/css" href="~/css/main.css">
+<!--===============================================================================================-->
+<!--===============================================================================================-->
+<script src="~/vendor/jquery/jquery-3.2.1.min.js"></script>
+<!--===============================================================================================-->
+<script src="~/vendor/bootstrap/js/popper.js"></script>
+<script src="~/vendor/bootstrap/js/bootstrap.min.js"></script>
+<!--===============================================================================================-->
+<script src="~/vendor/select2/select2.min.js"></script>
+<!--===============================================================================================-->
+<script src="~/js/main.js"></script>
+
+<h2>Tasks on @ViewBag.Day @ViewBag.MonthString @ViewBag.Year</h2>
+<a href="../../Calendar/Index?year=@ViewBag.Year&month=@ViewBag.Month">Back</a>
+@foreach (ToDoList_Jefremov_.Models.ToDo task in ViewBag.Tasks)
+{
+    <div style="border: 1px solid black; padding: 5px; margin: 25px;">
+        <h1>@task.Name</h1>
+        <h3>Description</h3>
+        <p>@task.Description</p>
+        <a href="../../ToDoes/Edit?id=@task.Id">Edit</a>
+        <a href="../../ToDoes/Delete?id=@task.Id">Delete</a>
+    </div>
+}
+

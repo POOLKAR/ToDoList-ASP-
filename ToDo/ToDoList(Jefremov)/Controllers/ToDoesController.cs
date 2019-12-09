@@ -26,7 +26,21 @@ namespace ToDoList_Jefremov_.Controllers
 			string CurrentUserId = User.Identity.GetUserId();
 			ApplicationUser currentUser = db.Users.FirstOrDefault
 				(x => x.Id == CurrentUserId);
-			return db.ToDo.ToList().Where(x => x.User == currentUser);
+
+			IEnumerable<ToDo> myToDoes = db.ToDo.ToList().Where(x => x.User == currentUser);
+
+			int completeCount = 0;
+			foreach (ToDo toDo in myToDoes)
+			{
+				if(toDo.isDone)
+				{
+					completeCount++;
+				}
+			}
+
+            ViewBag.Percent = 100f * ((float)completeCount / (float)myToDoes.Count());
+
+            return myToDoes;
 		}
 
 
@@ -51,9 +65,9 @@ namespace ToDoList_Jefremov_.Controllers
         }
 
         // GET: ToDoes/Create
-        public ActionResult Create()
+        public ActionResult Create(ToDo task = null, bool isDone = false)
         {
-            return View();
+            return View(task);
         }
 
         // POST: ToDoes/Create
@@ -90,9 +104,7 @@ namespace ToDoList_Jefremov_.Controllers
 				ApplicationUser currentUser = db.Users.FirstOrDefault
 					(x => x.Id == currentUserId);
 				toDo.User = currentUser;
-				toDo.Name = "Hello";
-				toDo.Description = "Example";
-				toDo.isDone = false;
+				
 				 
 				db.ToDo.Add(toDo);
 				db.SaveChanges();
@@ -101,18 +113,19 @@ namespace ToDoList_Jefremov_.Controllers
 			return PartialView("_ToDoTable", GetMyToDoes());
 		}
 
-        // GET: ToDoes/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            ToDo toDo = db.ToDo.Find(id);
-            if (toDo == null)
-            {
-                return HttpNotFound();
-            }
+
+		public ActionResult Edit(int? id)
+		{
+			if(id == null)
+			{
+				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+			}
+			ToDo toDo = db.ToDo.Find(id);
+
+			if(toDo == null)
+			{
+				return HttpNotFound();
+			}
 
 			string currentUserId = User.Identity.GetUserId();
 			ApplicationUser currentUser = db.Users.FirstOrDefault
@@ -124,8 +137,8 @@ namespace ToDoList_Jefremov_.Controllers
 			}
 
 			return View(toDo);
-            
-        }
+		}
+
 
         // POST: ToDoes/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
@@ -143,22 +156,21 @@ namespace ToDoList_Jefremov_.Controllers
             return View(toDo);
         }
 
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public ActionResult AJAXEdit(int? id, bool value)
+		
+		public ActionResult AJAXEdit(int? id, bool? value)
 		{
 			if ( id == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			ToDo toDo = db.ToDo.Find(id);
+			ToDo toDo = db.ToDo.Where(x => x.Id == id).FirstOrDefault();
 			if (toDo == null)
 			{
 				return HttpNotFound();
 			}
 			else
 			{
-				toDo.isDone = value;
+				toDo.isDone = value.Value;
 				db.Entry(toDo).State = EntityState.Modified;
 				db.SaveChanges();
 				return PartialView("_ToDoTable", GetMyToDoes());
