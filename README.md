@@ -17,7 +17,7 @@
 <dt>Надо создать свои 3 функции<dt/>
 <dd>1.выводить сколько объектов</dd>
 <dd>2.поиск по предметам</dd>
-<dd>3.добавлять новые данные</dd>
+<dd>3.поиск по дате(день,месяц,год)</dd>
 </dl>
 
 <h2>XML Файл</h2>
@@ -106,17 +106,44 @@ function searchObjectsByName($query){
 
 ```
 
-function searchObjectbyDate($query){
+function searchObjectbyDate($day, $month, $year){
     global $ToDo;
     $result = array();
     foreach ($ToDo -> list as $list1){
-        if (substr(strtolower($list1 -> date), 0, strlen($query))== strtolower($query))
-            array_push($result, $list1);
+        $date = DateTime::createFromFormat("d.m.Y", $list1 -> date);
+		$dDay = $date -> format("d");
+		$dMonth = $date -> format("m");
+		$dYear = $date -> format("Y");
+		
+		$add = true;
+		if ($day != -1) {
+			if ($day != $dDay)
+				$add = false;
+		}
+		
+		if ($month != -1) {
+			if ($month != $dMonth)
+				$add = false;
+		}
+		
+		if ($year != -1) {
+			if ($year != $dYear)
+				$add = false;
+		}
+		
+		if ($add) {
+			array_push($result, $list1);
+		}
     }
     return $result;
+}
+
+searchObjectbyDate($day, $month, $year);
     
-    <form action="?" method="post">
-            Search: <input type="text" name="searchDate" placeholder="Name"/>
+    <form action="?" method="get">
+            <input type="number" name="day" placeholder="day"/>
+			<input type="number" name="month" placeholder="month"/>
+			<input type="number" name="year" placeholder="year" Value = "2000"/>
             <input type="submit" value="Find" />
         </form>
 			
@@ -129,8 +156,7 @@ function searchObjectbyDate($query){
                 
             </tr>
 			<?php
-			if(!empty($_POST["searchDate"])){
-				$result = searchObjectbyDate($_POST["searchDate"]);
+			$result = searchObjectbyDate($day, $month, $year);
             foreach($result as $list1) {
                 echo "<tr>";
                 echo "<td>".($list1 -> name)."</td>";
@@ -138,7 +164,6 @@ function searchObjectbyDate($query){
                 echo "<td>".($list1 -> description)."</td>";
 				echo "<td>".($list1 -> period)."</td>";
                 echo "</tr>";
-                }
 			}
 			
 			
